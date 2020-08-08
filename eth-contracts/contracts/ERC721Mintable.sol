@@ -145,11 +145,13 @@ contract ERC721 is Pausable, ERC165 {
 
     function balanceOf(address owner) public view returns (uint256) {
         require(owner != address(0), "invalid address");
-        return _operatorApprovals[owner].current();
+        return _ownedTokensCount[owner].current();
     }
 
     function ownerOf(uint256 tokenId) public view returns (address) {
-        return _tokenOwner(tokenId);
+        address owner = _tokenOwner[tokenId];
+        require(owner != address(0), "invalid address");
+        return owner;
     }
 
     //    @dev Approves another address to transfer the given token ID
@@ -227,7 +229,7 @@ contract ERC721 is Pausable, ERC165 {
     // @dev Internal function to mint a new token
     // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
     function _mint(address to, uint256 tokenId) internal {
-        require(_exists(to) == false, "sent token already existed");
+        require(_exists(tokenId) == false, "sent token already existed");
         require(to != address(0), "invalid address");
         _tokenOwner[tokenId] = to;
         _ownedTokensCount[to].increment();
@@ -237,7 +239,7 @@ contract ERC721 is Pausable, ERC165 {
     // @dev Internal function to transfer ownership of a given token ID to another address.
     // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
     function _transferFrom(address from, address to, uint256 tokenId) internal {
-        require(from == ownerOf, "sender should own send token");
+        require(from == ownerOf(tokenId), "sender should own send token");
         require(to != address(0), "invalid address");
         _clearApproval(tokenId);
         _ownedTokensCount[from].decrement();
@@ -474,15 +476,15 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
         _registerInterface(_INTERFACE_ID_ERC721_METADATA);
     }
 
-    function name() external views returns (string) {
+    function name() external returns (string memory) {
         return _name;
     }
 
-    function symbol() external views returns (string) {
+    function symbol() external returns (string memory) {
         return _symbol;
     }
 
-    function baseTokenURI() external views returns (string) {
+    function baseTokenURI() external returns (string memory) {
         return _baseTokenURI;
     }
 
@@ -491,8 +493,8 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
         return _tokenURIs[tokenId];
     }
 
-    function setTokenURI(uint256 _tokenId) internal {
-        require(_exists(tokenId));
+    function _setTokenURI(uint256 _tokenId) internal {
+        require(_exists(_tokenId));
         _tokenURIs[_tokenId] = strConcat(_baseTokenURI, uint2str(_tokenId));
     }
 }
