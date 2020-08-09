@@ -15,7 +15,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
 
     solution[] private solutions;
     mapping(bytes32 => solution) private submittedSolutions;
-    uint256 indexCounter = 0;
+    uint256 indexCounter = 1;
 
     event SolutionAdded(bytes32 key, uint256 index, address sender);
 
@@ -26,7 +26,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
     function addSolution(uint[2] memory _a, uint[2][2] memory _b, uint[2] memory _c, uint[2] memory _input) public {
         bytes32 key = keccak256(abi.encodePacked(_a, _b, _c, _input));
         require(submittedSolutions[key].index == 0, "require unique solution");
-        require(submittedSolutions[key].sender != address(0), "require unique solution");
+        require(submittedSolutions[key].sender != msg.sender, "require unique solution");
         solution memory newSolution = solution({index : indexCounter, sender : msg.sender});
         submittedSolutions[key] = newSolution;
         solutions.push(newSolution);
@@ -40,31 +40,3 @@ contract SolnSquareVerifier is ERC721MintableComplete {
         super._mint(_to, _tokenId);
     }
 }
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
