@@ -41,7 +41,7 @@ contract address
 
 ## Opensea
 
-URL: https://rinkeby.opensea.io/accounts/0xb1ee2c53374a953662e4ef4d34ba6b2c5ac86dd1
+URL: https://rinkeby.opensea.io/storefront/testtokenname
 
 # Project Resources
 
